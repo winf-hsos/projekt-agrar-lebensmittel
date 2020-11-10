@@ -15,14 +15,13 @@ function start(data) {
 
     // Merge projects and participants
     let merged = mergeProjectsAndParticipantsData();
+    let registeredProjects = merged.filter((p) => { return p.angemeldet === "JA" && p.participants.length > 0 });
 
     let projectTable = document.querySelector("#projectTableRows");
 
-    for (let i = 0; i < merged.length; i++) {
-        if (merged[i].participants.length > 0) {
-            let projectRowElement = createProjectTableRowItem(i + 1, merged[i]);
-            projectTable.appendChild(projectRowElement);
-        }
+    for (let i = 0; i < registeredProjects.length; i++) {
+        let projectRowElement = createProjectTableRowItem(i + 1, registeredProjects[i]);
+        projectTable.appendChild(projectRowElement);
     }
 }
 
@@ -35,10 +34,31 @@ function createProjectTableRowItem(nr, project) {
     columnElement.textContent = nr;
     tableRowElement.appendChild(columnElement);
 
+    // track
+    columnElement = document.createElement('td');
+    columnElement.textContent = project.branche;
+    tableRowElement.appendChild(columnElement);
+
+    if (project.branche === "Landwirtschaft") {
+        tableRowElement.classList.add("landwirtschaft")
+    }
+
+    if (project.branche === "Lebensmittel") {
+        tableRowElement.classList.add("lebensmittel")
+    }
+
+    if (project.branche === "Obst- und Gartenbau") {
+        tableRowElement.classList.add("gartenbau")
+    }
+
+
     // titel
     columnElement = document.createElement('td');
     columnElement.textContent = project.titel;
     tableRowElement.appendChild(columnElement);
+
+
+
 
     // betreuer/in
     columnElement = document.createElement('td');
