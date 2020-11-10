@@ -1,7 +1,10 @@
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const sheetKey = urlParams.get('sheetkey');
 
 Promise.all([
-    readSheetData("1Ve7ZlI5FrTtEBEYfixe98JOuwKWKc1dXd_vgM6d2BB8", 2),
-    readSheetData("1Ve7ZlI5FrTtEBEYfixe98JOuwKWKc1dXd_vgM6d2BB8", 1)]).then(start);
+    readSheetData(sheetKey, 2),
+    readSheetData(sheetKey, 1)]).then(start);
 
 var projects, participants;
 
