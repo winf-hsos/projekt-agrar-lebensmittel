@@ -22,17 +22,21 @@ async function readSheetData(workbookId, sheetNumber) {
     data.title = json.feed.title['$t']
     let dataRows = [];
 
-    for (let i = 0; i < rows.length; i++) {
-        let row = rows[i];
-        let rowObj = {}
-        for (column in row) {
+    if (rows) {
 
-            if (column.startsWith('gsx$')) {
-                let columnName = column.split("$")[1];
-                rowObj[columnName] = row[column]["$t"];
+
+        for (let i = 0; i < rows.length; i++) {
+            let row = rows[i];
+            let rowObj = {}
+            for (column in row) {
+
+                if (column.startsWith('gsx$')) {
+                    let columnName = column.split("$")[1];
+                    rowObj[columnName] = row[column]["$t"];
+                }
             }
+            dataRows.push(rowObj);
         }
-        dataRows.push(rowObj);
     }
 
     data.rows = dataRows;
