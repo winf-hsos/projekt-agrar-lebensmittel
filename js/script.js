@@ -20,7 +20,7 @@ function start(data) {
 
     // Merge projects and participants
     let merged = mergeProjectsAndParticipantsData();
-    let registeredProjects = merged.filter((p) => { return (p.angemeldet === "Angemeldet" && p.participants.length > 0) || p.status === "Offen" });
+    let registeredProjects = merged.filter((p) => { return (p.status === "Angemeldet" && p.participants.length > 0) || p.status === "Offen" });
 
     let projectTable = document.querySelector("#projectTableRows");
 
