@@ -27,6 +27,7 @@ function semesterSelected(evt) {
 getData().then(() => {
     showAdminFunctions();
     setupDropDownSemester();
+    console.dir(meta)
 })
 
 function showAdminFunctions() {
@@ -34,7 +35,6 @@ function showAdminFunctions() {
     document.getElementById("btnMailToAllStudents").removeAttribute("hidden");
     document.getElementById("btnMailToAllStudentsInstructorsCc").removeAttribute("hidden");
     document.getElementById("btnsubmitFinalReports").removeAttribute("hidden");
-
 
     console.dir(merged);
 }

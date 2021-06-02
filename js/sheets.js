@@ -15,7 +15,6 @@ async function readSheetData(workbookId, sheetNumber) {
         return { "error": "No data returned. Maybe sheet not published to web, wrong workbook ID, or sheet " + sheetNumber + " does not exist in sheet?" };
     }
 
-
     let rows = json.feed.entry;
 
     let data = {};

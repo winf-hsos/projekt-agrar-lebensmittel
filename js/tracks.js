@@ -3,12 +3,12 @@ const urlParams = new URLSearchParams(queryString);
 const sheetKey = urlParams.get('sheetkey');
 
 Promise.all([
-    readSheetData(sheetKey, 2),
-    readSheetData(sheetKey, 1)]).then(start);
+    readSheetData(sheetKey, 3),
+    readSheetData(sheetKey, 2)]).then(start);
 
 var projects, participants;
-
-var tableTrack1, tableTrack2;
+var tableTrack1, tableTrack2, tableTrack3;
+var tracks;
 
 function start(data) {
 
@@ -17,7 +17,16 @@ function start(data) {
 
     // Merge projects and participants
     let merged = mergeProjectsAndParticipantsData();
-    let registeredProjects = merged.filter((p) => { return p.angemeldet === "JA" && p.participants.length > 0 });
+    let registeredProjects = merged.filter((p) => { return p.status === "Angemeldet" && p.participants.length > 0 });
+
+    console.dir(registeredProjects);
+
+    tracks = new Set();
+    for (let i = 0; i < registeredProjects.length; i++) {
+        tracks.add(registeredProjects[i].track);
+    }
+    tracks = Array.from(tracks);
+
     // Sort projects by time slot
     registeredProjects = registeredProjects.sort(function (a, b) {
         var timeA = a.zeitslot;
@@ -33,14 +42,57 @@ function start(data) {
         return 0;
     });
 
-    let tableTrack1 = document.querySelector("#tableTrack1");
-    let tableTrack2 = document.querySelector("#tableTrack2");
+    let track1 = document.querySelector("#track1");
+    let track2 = document.querySelector("#track2");
+    let track3 = document.querySelector("#track3");
 
-    let projectsTrack1 = registeredProjects.filter((p) => { return p.branche === "Lebensmittel" || p.branche === "Obst- und Gartenbau" })
-    let projectsTrack2 = registeredProjects.filter((p) => { return p.branche === "Landwirtschaft" })
+    let titleTrack1 = document.querySelector("#titleTrack1");
+    let titleTrack2 = document.querySelector("#titleTrack2");
+    let titleTrack3 = document.querySelector("#titleTrack3");
+
+    tableTrack1 = document.querySelector("#tableTrack1");
+    tableTrack2 = document.querySelector("#tableTrack2");
+    tableTrack3 = document.querySelector("#tableTrack3");
+
+    let projectsTrack1 = [];
+    let projectsTrack2 = [];
+    let projectsTrack3 = [];
+
+    if (tracks.length === 1) {
+        projectsTrack1 = registeredProjects.filter((p) => { return p.track === tracks[0] });
+
+        titleTrack1.textContent = tracks[0];
+
+        track1.removeAttribute("hidden");
+    }
+    if (tracks.length === 2) {
+        projectsTrack1 = registeredProjects.filter((p) => { return p.track === tracks[0] });
+        projectsTrack2 = registeredProjects.filter((p) => { return p.track === tracks[1] });
+
+        titleTrack1.textContent = tracks[0];
+        titleTrack2.textContent = tracks[1];
+
+        track1.removeAttribute("hidden");
+        track2.removeAttribute("hidden");
+    }
+
+    if (tracks.length === 3) {
+        projectsTrack1 = registeredProjects.filter((p) => { return p.track === tracks[0] });
+        projectsTrack2 = registeredProjects.filter((p) => { return p.track === tracks[1] });
+        projectsTrack3 = registeredProjects.filter((p) => { return p.track === tracks[2] });
+
+        titleTrack1.textContent = tracks[0];
+        titleTrack2.textContent = tracks[1];
+        titleTrack3.textContent = tracks[2];
+
+        track1.removeAttribute("hidden");
+        track2.removeAttribute("hidden");
+        track3.removeAttribute("hidden");
+    }
 
     for (let i = 0; i < projectsTrack1.length; i++) {
 
+        // PAUSE every 3rd presentation
         if (i % 3 === 0 && i > 2) {
             tableTrack1.appendChild(createPlaceholderElement("P A U S E"));
         }
@@ -57,6 +109,16 @@ function start(data) {
 
         let projectRowElement = createProjectTableRowItem(projectsTrack2[i]);
         tableTrack2.appendChild(projectRowElement);
+    }
+
+    for (let i = 0; i < projectsTrack3.length; i++) {
+
+        if (i % 3 === 0 && i > 2) {
+            tableTrack3.appendChild(createPlaceholderElement("P A U S E"));
+        }
+
+        let projectRowElement = createProjectTableRowItem(projectsTrack3[i]);
+        tableTrack3.appendChild(projectRowElement);
     }
 }
 
@@ -125,7 +187,6 @@ function mergeProjectsAndParticipantsData() {
 
         for (let j = 0; j < participants.rows.length; j++) {
 
-
             if (participants.rows[j].projektid === project.projektid) {
                 project.participants.push(participants.rows[j]);
             }
@@ -136,6 +197,8 @@ function mergeProjectsAndParticipantsData() {
 }
 
 function shortenTitle(title, characters = 55) {
+    if (tracks.length === 1)
+        characters = 150;
     if (title.length < characters + 5)
         return title;
 
